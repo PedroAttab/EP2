@@ -109,3 +109,21 @@ def aloca_navios(mapa, frota):
                             mapa[linha][j] = 'N'
                     break
     return mapa
+
+def exibir_tabuleiro(tabuleiro):
+    tamanho_tabuleiro = len(tabuleiro)
+    print('   ' + ' '.join(ALFABETO[:tamanho_tabuleiro]))
+    for i, linha in enumerate(tabuleiro):
+        print(f'{i+1:2} ', end='')
+        for celula in linha:
+            print(celula + ' ', end='')
+        print()
+
+def selecionar_nacao():
+    print("\nEscolha o número da nação para sua frota:")
+    while True:
+        escolha = input("Número da nação: ")
+        if escolha.isdigit() and 1 <= int(escolha) <= 5:
+            return int(escolha)
+        else:
+            print("Número inválido! Escolha um número de 1 a 5.")
