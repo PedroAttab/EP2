@@ -61,3 +61,51 @@ CORES = {
     'cyan': '\u001b[36m',
     'white': '\u001b[37m'
 }
+
+# Funções auxiliares
+def cria_mapa(N):
+    matriz = []
+    for i in range(N):
+        linha = []
+        for j in range(N):
+            linha.append(' ')
+        matriz.append(linha)
+    return matriz
+
+def posicao_suporta(mapa, blocos, linha, coluna, orientacao):
+    tamanho_mapa = len(mapa)
+
+    if orientacao == 'v':
+        if linha + blocos > tamanho_mapa:
+            return False
+        for i in range(linha, linha + blocos):
+            if mapa[i][coluna] != ' ':
+                return False
+    elif orientacao == 'h':
+        if coluna + blocos > tamanho_mapa:
+            return False
+        for j in range(coluna, coluna + blocos):
+            if mapa[linha][j] != ' ':
+                return False
+    else:
+        return False
+
+    return True
+
+def aloca_navios(mapa, frota):
+    tamanho_mapa = len(mapa)
+    for navio, quantidade in frota.items():
+        for _ in range(quantidade):
+            while True:
+                linha = random.randint(0, tamanho_mapa - 1)
+                coluna = random.randint(0, tamanho_mapa - 1)
+                orientacao = random.choice(['h', 'v'])
+                if posicao_suporta(mapa, CONFIGURACAO[navio], linha, coluna, orientacao):
+                    if orientacao == 'v':
+                        for i in range(linha, linha + CONFIGURACAO[navio]):
+                            mapa[i][coluna] = 'N'
+                    elif orientacao == 'h':
+                        for j in range(coluna, coluna + CONFIGURACAO[navio]):
+                            mapa[linha][j] = 'N'
+                    break
+    return mapa
