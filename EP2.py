@@ -153,3 +153,24 @@ def alocar_navios_jogador(mapa, frota):
                     break
                 else:
                     print("Posição inválida! Tente novamente.")
+
+def realizar_ataque(mapa, linha, coluna):
+    if mapa[linha][coluna] == 'N':
+        mapa[linha][coluna] = 'X'
+        print("Acertou um navio!")
+    else:
+        mapa[linha][coluna] = 'O'
+        print("Errou o alvo!")
+
+def verificar_vitoria(mapa):
+    for linha in mapa:
+        if 'N' in linha:
+            return False
+    return True
+
+def foi_derrotado(matriz):
+    for linha in matriz:
+        if 'N' in linha:
+            return False
+    return True
+
