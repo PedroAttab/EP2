@@ -174,3 +174,63 @@ def foi_derrotado(matriz):
             return False
     return True
 
+def jogar_batalha_naval():
+    tamanho_tabuleiro = 10
+    tabuleiro_jogador1 = cria_mapa(tamanho_tabuleiro)
+    tabuleiro_jogador2 = cria_mapa(tamanho_tabuleiro)
+
+    print("=" * 37)
+    print("|                                     |")
+    print("| Bem-vindo ao INSPER - Batalha Naval |")
+    print("|                                     |")
+    print("=" * 37)
+    print("Iniciando o Jogo!\n")
+
+    print("Frotas disponíveis:")
+    for numero, nacao in PAISES.items():
+        print(f"{numero}: {nacao}")
+        for navio, quantidade in nacao.items():
+            print(f"   {quantidade} {navio}")
+
+    alocar_navios_jogador(tabuleiro_jogador1, PAISES)
+
+    print("\nComputador está alocando os navios de guerra do país Japão...")
+    aloca_navios(tabuleiro_jogador2, PAISES['Japão'])
+
+    print("\nComputador já está em posição de batalha!\n")
+
+    vez_do_jogador1 = True
+
+    while True:
+        if vez_do_jogador1:
+            print("\nVez do Jogador 1:")
+            exibir_tabuleiro(tabuleiro_jogador2)
+            while True:
+                ataque = input("Escolha a posição para atacar (ex: A1): ")
+                linha = int(ataque[1:]) - 1
+                coluna = ALFABETO.index(ataque[0].upper())
+                if 0 <= linha < tamanho_tabuleiro and 0 <= coluna < tamanho_tabuleiro:
+                    if tabuleiro_jogador2[linha][coluna] == ' ':
+                        realizar_ataque(tabuleiro_jogador2, linha, coluna)
+                        break
+                    else:
+                        print("Posição já foi atacada! Escolha outra.")
+                else:
+                    print("Posição inválida! Tente novamente.")
+            if verificar_vitoria(tabuleiro_jogador2):
+                print("\nParabéns! Jogador 1 venceu!")
+                break
+        else:
+            print("\nVez do Computador:")
+            linha = random.randint(0, tamanho_tabuleiro - 1)
+            coluna = random.randint(0, tamanho_tabuleiro - 1)
+            print(f"O computador ataca a posição {ALFABETO[coluna]}{linha + 1}")
+            realizar_ataque(tabuleiro_jogador1, linha, coluna)
+            if verificar_vitoria(tabuleiro_jogador1):
+                print("\nO Computador venceu!")
+                break
+
+        vez_do_jogador1 = not vez_do_jogador1
+
+# Iniciar o jogo
+jogar_batalha_naval()
