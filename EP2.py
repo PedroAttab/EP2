@@ -127,3 +127,29 @@ def selecionar_nacao():
             return int(escolha)
         else:
             print("Número inválido! Escolha um número de 1 a 5.")
+
+def alocar_navios_jogador(mapa, frota):
+    numero_nacao = selecionar_nacao()
+    nacao = list(PAISES.keys())[numero_nacao - 1]
+    frota_selecionada = PAISES[nacao]
+    print(f"\nVocê selecionou a frota do país {nacao}")
+    print("Alocando navios...")
+    for navio, quantidade in frota_selecionada.items():
+        print(f"Alocando {quantidade} navios do tipo {navio}...")
+        for _ in range(quantidade):
+            while True:
+                exibir_tabuleiro(mapa)
+                posicao = input(f"Escolha a posição para o navio {navio} (ex: A1): ")
+                orientacao = input("Escolha a orientação do navio (h para horizontal, v para vertical): ").lower()
+                linha = int(posicao[1:]) - 1
+                coluna = ALFABETO.index(posicao[0].upper())
+                if posicao_suporta(mapa, CONFIGURACAO[navio], linha, coluna, orientacao):
+                    if orientacao == 'v':
+                        for i in range(linha, linha + CONFIGURACAO[navio]):
+                            mapa[i][coluna] = 'N'
+                    elif orientacao == 'h':
+                        for j in range(coluna, coluna + CONFIGURACAO[navio]):
+                            mapa[linha][j] = 'N'
+                    break
+                else:
+                    print("Posição inválida! Tente novamente.")
