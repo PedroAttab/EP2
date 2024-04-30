@@ -1,7 +1,7 @@
 import random
 
 # Definições de constantes
-ALFABETO = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+ALFABETO = 'ABCDEFGHIJ'
 
 CONFIGURACAO = {
     'destroyer': 3,
@@ -112,6 +112,7 @@ def alocar_navios(mapa, frota):
 
 def alocar_navios_jogador(mapa, frota):
     print("\nPosicione seus navios:")
+    tamanho_mapa = len(mapa)
     for navio, quantidade in frota.items():
         print(f"\nAlocando {quantidade} navios do tipo {navio}:")
         for _ in range(quantidade):
@@ -119,9 +120,9 @@ def alocar_navios_jogador(mapa, frota):
                 exibir_tabuleiro(mapa)
                 posicao = input(f"\nEscolha a posição para o navio {navio} (ex: A1): ")
                 orientacao = input("Escolha a orientação do navio (h para horizontal, v para vertical): ").lower()
-                linha = int(posicao[1:]) - 1
-                coluna = ALFABETO.index(posicao[0].upper())
-                if posicao_suporta(mapa, CONFIGURACAO[navio], linha, coluna, orientacao):
+                linha = int(posicao[1:]) - 1 if posicao[1:].isdigit() and 1 <= int(posicao[1:]) <= tamanho_mapa else -1
+                coluna = ALFABETO.index(posicao[0].upper()) if posicao[0].upper() in ALFABETO else -1
+                if 0 <= linha < tamanho_mapa and 0 <= coluna < tamanho_mapa and posicao_suporta(mapa, CONFIGURACAO[navio], linha, coluna, orientacao):
                     if orientacao == 'v':
                         for i in range(linha, linha + CONFIGURACAO[navio]):
                             mapa[i][coluna] = 'N'
@@ -200,17 +201,23 @@ def jogar_batalha_naval():
     while True:
         if vez_do_jogador1:
             print("\nVez do Jogador:")
+            print("\nSeu Mapa:")
+            exibir_tabuleiro(tabuleiro_jogador1)
+            print("\nMapa do Computador:")
             exibir_tabuleiro(tabuleiro_jogador2, ocultar_navios=True)
             while True:
                 ataque = input("Escolha a posição para atacar (ex: A1): ")
-                linha = int(ataque[1:]) - 1
-                coluna = ALFABETO.index(ataque[0].upper())
+                linha = int(ataque[1:]) - 1 if ataque[1:].isdigit() and 1 <= int(ataque[1:]) <= tamanho_tabuleiro else -1
+                coluna = ALFABETO.index(ataque[0].upper()) if ataque[0].upper() in ALFABETO else -1
                 if 0 <= linha < tamanho_tabuleiro and 0 <= coluna < tamanho_tabuleiro:
-                    realizar_ataque(tabuleiro_jogador2, linha, coluna)
-                    if verificar_vitoria(tabuleiro_jogador2):
-                        print("\nParabéns! Você venceu!")
-                        return
-                    break
+                    if tabuleiro_jogador2[linha][coluna] == 'X' or tabuleiro_jogador2[linha][coluna] == 'O':
+                        print("Posição já foi atacada! Escolha outra.")
+                    else:
+                        realizar_ataque(tabuleiro_jogador2, linha, coluna)
+                        if verificar_vitoria(tabuleiro_jogador2):
+                            print("\nParabéns! Você venceu!")
+                            return
+                        break
                 else:
                     print("Posição inválida! Tente novamente.")
         else:
