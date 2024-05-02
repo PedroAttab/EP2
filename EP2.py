@@ -117,7 +117,7 @@ def alocar_navios_jogador(mapa, frota):
         print(f"\nAlocando {quantidade} navios do tipo {navio}:")
         for _ in range(quantidade):
             while True:
-                exibir_tabuleiro(mapa)
+                exibir_tabuleiro_lado_a_lado(mapa, cria_mapa(tamanho_mapa))
                 posicao = input(f"\nEscolha a posição para o navio {navio} (ex: A1): ")
                 orientacao = input("Escolha a orientação do navio (h para horizontal, v para vertical): ").lower()
                 linha = int(posicao[1:]) - 1 if posicao[1:].isdigit() and 1 <= int(posicao[1:]) <= tamanho_mapa else -1
@@ -133,16 +133,41 @@ def alocar_navios_jogador(mapa, frota):
                 else:
                     print("Posição inválida! Tente novamente.")
 
-def exibir_tabuleiro(tabuleiro, ocultar_navios=False):
-    tamanho_tabuleiro = len(tabuleiro)
-    print('   ' + ' '.join(ALFABETO[:tamanho_tabuleiro]))
-    for i, linha in enumerate(tabuleiro):
+def exibir_tabuleiro_lado_a_lado(tabuleiro_jogador, tabuleiro_inimigo, ocultar_navios=False):
+    tamanho_tabuleiro = len(tabuleiro_jogador)
+    
+    print('  Seu Mapa\t\t\t\t\tMapa do Computador')
+    print('   ' + ' '.join(ALFABETO[:tamanho_tabuleiro]) + ' ' * 8 + '   ' + ' '.join(ALFABETO[:tamanho_tabuleiro]))
+    
+    for i in range(tamanho_tabuleiro):
         print(f'{i+1:2} ', end='')
-        for celula in linha:
-            if ocultar_navios and celula == 'N':
+        for j in range(tamanho_tabuleiro):
+            if tabuleiro_jogador[i][j] == 'O':
+                print(CORES['blue'] + '██' + CORES['reset'], end='')
+            elif tabuleiro_jogador[i][j] == 'X':
+                print(CORES['red'] + '██' + CORES['reset'], end='')
+            elif tabuleiro_jogador[i][j] == 'N':
+                print(CORES['green'] + '██' + CORES['reset'], end='')
+            else:
+                print('  ', end='')
+        
+        print(' ' * 8, end='')
+        
+        print(f'{i+1:2} ', end='')
+        for j in range(tamanho_tabuleiro):
+            if ocultar_navios and tabuleiro_inimigo[i][j] == 'N':
                 print(' ' + ' ', end='')
             else:
-                print(celula + ' ', end='')
+                if tabuleiro_inimigo[i][j] == 'O':
+                    print(CORES['blue'] + '██' + CORES['reset'], end='')
+                elif tabuleiro_inimigo[i][j] == 'X':
+                    print(CORES['red'] + '██' + CORES['reset'], end='')
+                elif tabuleiro_inimigo[i][j] == 'N':
+                    print(CORES['green'] + '██' + CORES['reset'], end='')
+                elif tabuleiro_inimigo[i][j] == ' ':
+                    print('  ', end='')  
+                else:
+                    print('  ', end='')
         print()
 
 def realizar_ataque(mapa, linha, coluna):
@@ -201,11 +226,8 @@ def jogar_batalha_naval():
     while True:
         if vez_do_jogador1:
             print("\nVez do Jogador:")
-            print("\nSeu Mapa:")
-            exibir_tabuleiro(tabuleiro_jogador1)
-            print("\nMapa do Computador:")
-            exibir_tabuleiro(tabuleiro_jogador2, ocultar_navios=True)
             while True:
+                exibir_tabuleiro_lado_a_lado(tabuleiro_jogador1, tabuleiro_jogador2, ocultar_navios=True)
                 ataque = input("Escolha a posição para atacar (ex: A1): ")
                 linha = int(ataque[1:]) - 1 if ataque[1:].isdigit() and 1 <= int(ataque[1:]) <= tamanho_tabuleiro else -1
                 coluna = ALFABETO.index(ataque[0].upper()) if ataque[0].upper() in ALFABETO else -1
@@ -232,5 +254,13 @@ def jogar_batalha_naval():
 
         vez_do_jogador1 = not vez_do_jogador1
 
-# Iniciar o jogo
-jogar_batalha_naval()
+def main():
+    while True:
+        jogar_batalha_naval()
+        resposta = input("Deseja jogar novamente? (s/n): ").lower()
+        if resposta != 's':
+            print("Obrigado por jogar! Até a próxima!")
+            break
+
+if __name__ == "__main__":
+    main()
